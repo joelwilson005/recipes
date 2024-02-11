@@ -1,0 +1,147 @@
+2024-02-10T22:39:09.767-05:00  INFO 5540 --- [main] com.joel.recipes.RecipesApplication      : Starting RecipesApplication using Java 17 with PID 5540 (C:\Users\joelw\IdeaProjects\recipes\target\classes started by joelw in C:\Users\joelw\IdeaProjects\recipes)
+2024-02-10T22:39:09.775-05:00  INFO 5540 --- [main] com.joel.recipes.RecipesApplication      : The following 1 profile is active: "dev"
+2024-02-10T22:39:13.440-05:00  INFO 5540 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-02-10T22:39:13.988-05:00  INFO 5540 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 518 ms. Found 6 JPA repository interfaces.
+2024-02-10T22:39:16.197-05:00  INFO 5540 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-02-10T22:39:16.234-05:00  INFO 5540 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-02-10T22:39:16.234-05:00  INFO 5540 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-10T22:39:16.542-05:00  INFO 5540 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-02-10T22:39:16.543-05:00  INFO 5540 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 6631 ms
+2024-02-10T22:39:17.438-05:00  INFO 5540 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-02-10T22:39:17.640-05:00  INFO 5540 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2024-02-10T22:39:17.776-05:00  INFO 5540 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-02-10T22:39:18.477-05:00  INFO 5540 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-02-10T22:39:18.560-05:00  INFO 5540 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-02-10T22:39:18.934-05:00  INFO 5540 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6fad5ace
+2024-02-10T22:39:18.939-05:00  INFO 5540 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-02-10T22:39:22.433-05:00  INFO 5540 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-02-10T22:39:22.603-05:00  WARN 5540 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2024-02-10T22:39:22.603-05:00  WARN 5540 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : drop cascades to constraint fkl4kv6416b8esujn6019wqp74t on table administrator_authorities
+2024-02-10T22:39:22.934-05:00  INFO 5540 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-02-10T22:39:25.338-05:00  WARN 5540 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-02-10T22:39:26.305-05:00  INFO 5540 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2024-02-10T22:39:26.526-05:00  INFO 5540 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Or [Mvc [pattern='/api/v1/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@2778f3d1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@30a34f07, org.springframework.security.web.context.SecurityContextHolderFilter@75ee63f2, org.springframework.security.web.header.HeaderWriterFilter@274de4bc, org.springframework.web.filter.CorsFilter@71702d3f, org.springframework.security.web.authentication.logout.LogoutFilter@2e50ca51, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter@47620803, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@356c8c1b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6cad2d5f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6f9d1785, org.springframework.security.web.session.SessionManagementFilter@3ed79f41, org.springframework.security.web.access.ExceptionTranslationFilter@1e3f0c5c, org.springframework.security.web.access.intercept.AuthorizationFilter@1c71d704]
+2024-02-10T22:39:27.289-05:00  INFO 5540 --- [main] AbstractAzureServiceClientBuilderFactory : Will configure the default credential of type DefaultAzureCredential for class com.azure.identity.DefaultAzureCredentialBuilder.
+2024-02-10T22:39:27.622-05:00  WARN 5540 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'mailNotifier' defined in class path resource [de/codecentric/boot/admin/server/config/AdminServerNotifierAutoConfiguration$MailNotifierConfiguration.class]: Unsatisfied dependency expressed through method 'mailNotifier' parameter 1: No qualifying bean of type 'de.codecentric.boot.admin.server.domain.entities.InstanceRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2024-02-10T22:39:27.642-05:00  INFO 5540 --- [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-02-10T22:39:27.647-05:00  INFO 5540 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-02-10T22:39:27.657-05:00  INFO 5540 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-02-10T22:39:27.663-05:00  INFO 5540 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2024-02-10T22:39:27.696-05:00  INFO 5540 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-02-10T22:39:27.759-05:00 ERROR 5540 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 1 of method mailNotifier in de.codecentric.boot.admin.server.config.AdminServerNotifierAutoConfiguration$MailNotifierConfiguration required a bean of type 'de.codecentric.boot.admin.server.domain.entities.InstanceRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'de.codecentric.boot.admin.server.domain.entities.InstanceRepository' in your configuration.
+
+2024-02-10T22:41:26.441-05:00  INFO 6644 --- [main] com.joel.recipes.RecipesApplication      : Starting RecipesApplication using Java 17 with PID 6644 (C:\Users\joelw\IdeaProjects\recipes\target\classes started by joelw in C:\Users\joelw\IdeaProjects\recipes)
+2024-02-10T22:41:26.446-05:00  INFO 6644 --- [main] com.joel.recipes.RecipesApplication      : The following 1 profile is active: "dev"
+2024-02-10T22:41:28.890-05:00  INFO 6644 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-02-10T22:41:29.252-05:00  INFO 6644 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 344 ms. Found 6 JPA repository interfaces.
+2024-02-10T22:41:30.839-05:00  INFO 6644 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-02-10T22:41:30.866-05:00  INFO 6644 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-02-10T22:41:30.866-05:00  INFO 6644 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-10T22:41:31.022-05:00  INFO 6644 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-02-10T22:41:31.023-05:00  INFO 6644 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4480 ms
+2024-02-10T22:41:31.424-05:00 DEBUG 6644 --- [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2024-02-10T22:41:31.669-05:00  INFO 6644 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-02-10T22:41:31.853-05:00  INFO 6644 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2024-02-10T22:41:31.952-05:00  INFO 6644 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-02-10T22:41:32.440-05:00  INFO 6644 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-02-10T22:41:32.502-05:00  INFO 6644 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-02-10T22:41:32.821-05:00  INFO 6644 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@49f1184e
+2024-02-10T22:41:32.825-05:00  INFO 6644 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-02-10T22:41:35.577-05:00  INFO 6644 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-02-10T22:41:35.968-05:00  INFO 6644 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-02-10T22:41:39.126-05:00  WARN 6644 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-02-10T22:41:39.504-05:00 DEBUG 6644 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2024-02-10T22:41:39.786-05:00 DEBUG 6644 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-02-10T22:41:40.162-05:00  INFO 6644 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2024-02-10T22:41:40.392-05:00  INFO 6644 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Or [Mvc [pattern='/api/v1/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@1ba00c0c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3a35a792, org.springframework.security.web.context.SecurityContextHolderFilter@1bf8ea44, org.springframework.security.web.header.HeaderWriterFilter@32107bba, org.springframework.web.filter.CorsFilter@254dfd34, org.springframework.security.web.authentication.logout.LogoutFilter@33f5d807, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter@7ef6a063, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@64236be, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6da5cb1, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@72f4232, org.springframework.security.web.session.SessionManagementFilter@15b54cb7, org.springframework.security.web.access.ExceptionTranslationFilter@6c366d3, org.springframework.security.web.access.intercept.AuthorizationFilter@15c48119]
+2024-02-10T22:41:40.650-05:00 DEBUG 6644 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-02-10T22:41:40.723-05:00 DEBUG 6644 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-02-10T22:41:41.209-05:00  INFO 6644 --- [main] AbstractAzureServiceClientBuilderFactory : Will configure the default credential of type DefaultAzureCredential for class com.azure.identity.DefaultAzureCredentialBuilder.
+2024-02-10T22:41:42.201-05:00  INFO 6644 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2024-02-10T22:41:42.622-05:00  INFO 6644 --- [main] com.joel.recipes.RecipesApplication      : Started RecipesApplication in 17.108 seconds (process running for 19.11)
+2024-02-10T22:41:48.526-05:00  INFO 6644 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-02-10T22:41:48.526-05:00  INFO 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-02-10T22:41:48.526-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-02-10T22:41:48.527-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-02-10T22:41:48.527-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-02-10T22:41:48.528-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@699794d
+2024-02-10T22:41:48.529-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@659f5f32
+2024-02-10T22:41:48.530-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-02-10T22:41:48.530-05:00  INFO 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2024-02-10T22:41:48.598-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/user/auth/register
+2024-02-10T22:41:48.624-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2024-02-10T22:41:48.625-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.s.w.session.SessionManagementFilter  : Request requested invalid session id CDDE6B33829F6119F813B84F7656072F
+2024-02-10T22:41:48.634-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/user/auth/register
+2024-02-10T22:41:48.638-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/user/auth/register", parameters={}
+2024-02-10T22:41:48.650-05:00  WARN 6644 --- [http-nio-8080-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpMediaTypeNotAcceptableException: No acceptable representation]
+2024-02-10T22:41:48.650-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 406 NOT_ACCEPTABLE
+2024-02-10T22:41:48.667-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for POST "/error", parameters={}
+2024-02-10T22:41:48.670-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#errorHtml(HttpServletRequest, HttpServletResponse)
+2024-02-10T22:41:48.716-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.w.s.v.ContentNegotiatingViewResolver : Selected 'text/html' given [text/html]
+2024-02-10T22:41:48.729-05:00 DEBUG 6644 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 406
+2024-02-10T22:42:33.464-05:00  INFO 6644 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-02-10T22:42:33.468-05:00  INFO 6644 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-02-10T22:42:33.478-05:00  INFO 6644 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-02-10T22:42:44.625-05:00  INFO 19196 --- [main] com.joel.recipes.RecipesApplication      : Starting RecipesApplication using Java 17 with PID 19196 (C:\Users\joelw\IdeaProjects\recipes\target\classes started by joelw in C:\Users\joelw\IdeaProjects\recipes)
+2024-02-10T22:42:44.632-05:00  INFO 19196 --- [main] com.joel.recipes.RecipesApplication      : The following 1 profile is active: "dev"
+2024-02-10T22:42:48.500-05:00  INFO 19196 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-02-10T22:42:49.057-05:00  INFO 19196 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 529 ms. Found 6 JPA repository interfaces.
+2024-02-10T22:42:51.919-05:00  INFO 19196 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-02-10T22:42:51.942-05:00  INFO 19196 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-02-10T22:42:51.942-05:00  INFO 19196 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-10T22:42:52.104-05:00  INFO 19196 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-02-10T22:42:52.105-05:00  INFO 19196 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 7350 ms
+2024-02-10T22:42:52.581-05:00 DEBUG 19196 --- [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2024-02-10T22:42:53.087-05:00  INFO 19196 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-02-10T22:42:53.326-05:00  INFO 19196 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2024-02-10T22:42:53.447-05:00  INFO 19196 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-02-10T22:42:54.185-05:00  INFO 19196 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-02-10T22:42:54.274-05:00  INFO 19196 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-02-10T22:42:54.841-05:00  INFO 19196 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@74a03bd5
+2024-02-10T22:42:54.847-05:00  INFO 19196 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-02-10T22:42:58.951-05:00  INFO 19196 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-02-10T22:42:59.412-05:00  INFO 19196 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-02-10T22:43:02.559-05:00  WARN 19196 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-02-10T22:43:02.967-05:00 DEBUG 19196 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2024-02-10T22:43:03.224-05:00 DEBUG 19196 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-02-10T22:43:03.799-05:00  INFO 19196 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2024-02-10T22:43:04.065-05:00  INFO 19196 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Or [Mvc [pattern='/api/v1/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@776ae580, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6b0bcea5, org.springframework.security.web.context.SecurityContextHolderFilter@5d3b0f8a, org.springframework.security.web.header.HeaderWriterFilter@5a429813, org.springframework.web.filter.CorsFilter@5748638c, org.springframework.security.web.authentication.logout.LogoutFilter@1dade178, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter@4c9ed40, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@139862ca, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@74a46f81, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7e864a8c, org.springframework.security.web.session.SessionManagementFilter@34949460, org.springframework.security.web.access.ExceptionTranslationFilter@50e7f88b, org.springframework.security.web.access.intercept.AuthorizationFilter@3f6bfcbe]
+2024-02-10T22:43:04.367-05:00 DEBUG 19196 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-02-10T22:43:04.472-05:00 DEBUG 19196 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-02-10T22:43:05.126-05:00  INFO 19196 --- [main] AbstractAzureServiceClientBuilderFactory : Will configure the default credential of type DefaultAzureCredential for class com.azure.identity.DefaultAzureCredentialBuilder.
+2024-02-10T22:43:07.049-05:00  INFO 19196 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2024-02-10T22:43:07.586-05:00  INFO 19196 --- [main] com.joel.recipes.RecipesApplication      : Started RecipesApplication in 23.972 seconds (process running for 25.4)
+2024-02-10T22:43:08.331-05:00  INFO 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-02-10T22:43:08.332-05:00  INFO 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-02-10T22:43:08.332-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-02-10T22:43:08.335-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-02-10T22:43:08.336-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-02-10T22:43:08.339-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@31eb5ed6
+2024-02-10T22:43:08.341-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@698b2343
+2024-02-10T22:43:08.341-05:00 DEBUG 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-02-10T22:43:08.342-05:00  INFO 19196 --- [RMI TCP Connection(3)-192.168.100.7] o.s.web.servlet.DispatcherServlet        : Completed initialization in 9 ms
+2024-02-10T22:43:24.599-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/user/auth/register
+2024-02-10T22:43:24.624-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2024-02-10T22:43:24.625-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.s.w.session.SessionManagementFilter  : Request requested invalid session id CDDE6B33829F6119F813B84F7656072F
+2024-02-10T22:43:24.637-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/user/auth/register
+2024-02-10T22:43:24.641-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/user/auth/register", parameters={}
+2024-02-10T22:43:24.648-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.joel.recipes.controller.UserEntityAuthenticationController#registerUser(RegisterUserEntityRequestDto)
+2024-02-10T22:43:24.770-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [RegisterUserEntityRequestDto[firstname=joel, lastname=wilson, email=joelwilsonjam@gmail.com, usernam (truncated)...]
+2024-02-10T22:43:27.103-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [application/json]
+2024-02-10T22:43:27.105-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User successfully created"]
+2024-02-10T22:43:27.115-05:00 DEBUG 19196 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 201 CREATED
