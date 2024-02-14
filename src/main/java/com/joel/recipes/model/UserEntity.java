@@ -28,6 +28,7 @@ public class UserEntity implements UserDetails {
     private String email;
     private boolean isEmailVerified;
     private Timestamp emailVerificationTimestamp;
+    private Timestamp accountCreationDate;
     private String username;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,6 +45,8 @@ public class UserEntity implements UserDetails {
     private Set<Recipe> favourites;
     @ManyToMany
     private Set<Role> authorities;
+    @OneToOne
+    private RefreshToken refreshToken;
     private AccountStatus accountStatus;
 
     @Override

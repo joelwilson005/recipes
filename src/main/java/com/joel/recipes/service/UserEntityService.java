@@ -25,13 +25,17 @@ public interface UserEntityService extends UserDetailsService {
 
     AuthenticatedUserEntity authenticateUserEntity(String email, String password) throws UserEntityDoesNotExistException;
 
-    AuthenticatedUserEntity loginUser(String email, String password) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException;
+    AuthenticatedUserEntity loginUser(String email, String password) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException, EmailAddressAlreadyVerifiedException;
 
     void resetPasswordRequest(String email) throws UserEntityDoesNotExistException, MessagingException, UnsupportedEncodingException;
+
+    String refreshToken(String refreshTokenValue) throws RefreshTokenNotFoundException, ExpiredVerificationTokenExeption, ExpiredRefreshTokenException;
 
     AuthenticatedUserEntity resetPasswordWithToken(String email, String verificationToken, String password) throws UserEntityDoesNotExistException, InvalidPasswordResetTokenException, ExpiredVerificationTokenExeption;
 
     void applyJsonPatchToUserEntity(JsonPatch patch, UUID id) throws UserEntityDoesNotExistException, JsonProcessingException, JsonPatchException, UsernameAlreadyTakenException, EmailAddressAlreadyTakenException, MessagingException, UnsupportedEncodingException, InvalidEmailAddressException, UserEntityValidationException;
+
+    void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException;
 
     void deleteUserEntity(UUID id) throws UserEntityDoesNotExistException;
 }

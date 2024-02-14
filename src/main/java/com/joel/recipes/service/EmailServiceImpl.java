@@ -6,6 +6,7 @@ import com.joel.recipes.util.VerificationTokenGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -23,8 +24,10 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.logging.Level;
 
 @Service
+@Log
 public class EmailServiceImpl implements EmailService {
 
     @Value("${spring.mail.properties.mail.smtp.from}")
@@ -78,7 +81,7 @@ public class EmailServiceImpl implements EmailService {
         return this.sendTokenEmail(userEntity, PASSWORD_RESET_TEMPLATE_NAME, "Reset password", TokenType.PASSWORD_RESET);
     }
 
-    public VerificationToken sendTokenEmail(UserEntity userEntity, String templateName, String subject, TokenType tokenType) throws MessagingException, UnsupportedEncodingException {
+    private VerificationToken sendTokenEmail(UserEntity userEntity, String templateName, String subject, TokenType tokenType) throws MessagingException, UnsupportedEncodingException {
         final MimeMessage mimeMessage = this.mailSender.createMimeMessage();
         final MimeMessageHelper email;
 
@@ -108,7 +111,11 @@ public class EmailServiceImpl implements EmailService {
                 userEntity.setEmailVerificationToken(verificationToken);
                 this.userEntityService.updateUserEntity(userEntity);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + tokenType);
+            default -> {
+                log.log(Level.SEVERE, "Unable to send email - Unexpected email type");
+                throw new IllegalStateException("Unexpected value: " + tokenType);
+            }
+
         }
 
         final String htmlContent = this.htmlTemplateEngine.process(templateName, context);

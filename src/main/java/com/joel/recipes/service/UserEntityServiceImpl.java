@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -39,8 +40,9 @@ public class UserEntityServiceImpl implements UserEntityService {
     private final JWTTokenService jwtTokenService;
     private final EmailService emailService;
     private final UserEntityMapper userEntityMapper;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserEntityServiceImpl(UserEntityRepository userEntityRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTTokenService jwtTokenService, EmailService emailService, UserEntityMapper userEntityMapper) {
+    public UserEntityServiceImpl(UserEntityRepository userEntityRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTTokenService jwtTokenService, EmailService emailService, UserEntityMapper userEntityMapper, RefreshTokenService refreshTokenService) {
         this.userEntityRepository = userEntityRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -48,6 +50,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         this.jwtTokenService = jwtTokenService;
         this.emailService = emailService;
         this.userEntityMapper = userEntityMapper;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -66,8 +69,8 @@ public class UserEntityServiceImpl implements UserEntityService {
         UserEntity userEntity = this.userEntityRepository.findUserEntityByEmail(email).orElseThrow(UserEntityDoesNotExistException::new);
         Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         String jwt = this.jwtTokenService.generateJwt(authentication, userEntity.getId());
-        return new AuthenticatedUserEntity(userEntity.getId(), jwt);
-
+        RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(email);
+        return new AuthenticatedUserEntity(userEntity.getId(), jwt, refreshToken.getTokenValue().toString());
     }
 
     @Override
@@ -90,6 +93,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         userEntity.setAuthorities(new HashSet<>(Collections.singletonList(userRole)));
         userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
         userEntity.setAccountStatus(AccountStatus.ACTIVE);
+        userEntity.setAccountCreationDate(Timestamp.from(Instant.now()));
         // Remove excess whitespace and capitalize
         userEntity.setFirstname(StringUtils.capitalize(StringUtils.trim(userEntity.getFirstname())));
         userEntity.setLastname(StringUtils.capitalize(StringUtils.trim(userEntity.getLastname())));
@@ -120,10 +124,20 @@ public class UserEntityServiceImpl implements UserEntityService {
 
 
     @Override
-    public AuthenticatedUserEntity loginUser(String userNameOrEmail, String password) throws UserEntityDoesNotExistException {
+    public AuthenticatedUserEntity loginUser(String userNameOrEmail, String password) throws UserEntityDoesNotExistException, EmailAddressAlreadyVerifiedException {
         UserEntity userEntity = this.userEntityRepository.findUserEntityByEmailOrUsername(userNameOrEmail).orElseThrow(UserEntityDoesNotExistException::new);
+        if (!userEntity.isEmailVerified()) throw new EmailAddressAlreadyVerifiedException();
         String email = userEntity.getEmail();
         return this.authenticateUserEntity(email, password);
+    }
+
+    @Override
+    public String refreshToken(String refreshTokenValue) throws RefreshTokenNotFoundException, ExpiredRefreshTokenException {
+        RefreshToken refreshToken = this.refreshTokenService.findRefreshTokenByTokenValue(refreshTokenValue);
+        this.refreshTokenService.verifyExpiration(refreshToken);
+        UserEntity userEntity = refreshToken.getUserEntity();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEntity, null, userEntity.getAuthorities());
+        return this.jwtTokenService.generateJwt(authentication, userEntity.getId());
     }
 
 
@@ -228,6 +242,19 @@ public class UserEntityServiceImpl implements UserEntityService {
         }
 
         this.userEntityRepository.save(userEntityToBeUpdated);
+    }
+
+    @Override
+    public void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException {
+        UserEntity userEntity = this.userEntityRepository.findById(id).orElseThrow(
+                UserEntityDoesNotExistException::new
+        );
+
+        RefreshToken refreshToken;
+        if (Objects.nonNull(userEntity.getRefreshToken())) {
+            refreshToken = userEntity.getRefreshToken();
+            this.refreshTokenService.deleteRefreshToken(refreshToken.getTokenValue().toString());
+        }
     }
 
     @Override

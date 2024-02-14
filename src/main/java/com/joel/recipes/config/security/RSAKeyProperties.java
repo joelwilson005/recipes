@@ -15,6 +15,7 @@ public class RSAKeyProperties {
 
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
+
     public RSAKeyProperties() {
         KeyPair keyPair = KeyGeneratorUtility.generateRsaKey();
         this.publicKey = (RSAPublicKey) keyPair.getPublic();

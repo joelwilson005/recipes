@@ -1,5 +1,6 @@
 package com.joel.recipes.config.security;
 
+import com.joel.recipes.model.RoleType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +26,9 @@ public class RestApiFilterChainConfig {
                 .authorizeHttpRequests(auth -> {
 
                     auth
+                            .requestMatchers("/restricted-url").hasRole(RoleType.USER.name())
                             .requestMatchers("/**").permitAll();
+
                 })
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwtCustomizer -> jwtCustomizer.jwtAuthenticationConverter(authenticationConverter)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

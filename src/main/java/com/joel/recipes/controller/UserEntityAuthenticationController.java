@@ -1,10 +1,7 @@
 package com.joel.recipes.controller;
 
 import com.joel.recipes.dto.*;
-import com.joel.recipes.exception.EmailAddressNotVerifiedException;
-import com.joel.recipes.exception.ExpiredVerificationTokenExeption;
-import com.joel.recipes.exception.InvalidPasswordResetTokenException;
-import com.joel.recipes.exception.UserEntityDoesNotExistException;
+import com.joel.recipes.exception.*;
 import com.joel.recipes.model.AuthenticatedUserEntity;
 import com.joel.recipes.model.UserEntity;
 import com.joel.recipes.service.UserEntityService;
@@ -13,10 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 
@@ -53,7 +48,7 @@ public class UserEntityAuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticatedUserEntity> login(@Valid @RequestBody LoginRequestDto request) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException {
+    public ResponseEntity<AuthenticatedUserEntity> login(@Valid @RequestBody LoginRequestDto request) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException, EmailAddressAlreadyVerifiedException {
         return new ResponseEntity<>(this.userEntityService.loginUser(
                 request.email(), request.password()), HttpStatus.OK);
     }
@@ -80,5 +75,26 @@ public class UserEntityAuthenticationController {
                 request.password()
         );
         return new ResponseEntity<>(authenticatedUserEntity, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<JWTResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto requestDto) throws ExpiredVerificationTokenExeption, RefreshTokenNotFoundException, ExpiredRefreshTokenException {
+        String refreshToken = this.userEntityService.refreshToken(requestDto.refreshToken());
+        JWTResponseDto responseDto = new JWTResponseDto(refreshToken);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout") // todo test this controller method
+    public ResponseEntity<ApiMessage> logoutUser(@Valid @RequestBody LogoutUserEntityRequestDto requestDto) throws UserEntityDoesNotExistException {
+        this.userEntityService.logoutUserEntity(requestDto.id());
+        return new ResponseEntity<>(new ApiMessage("User logged out successfully"), HttpStatus.OK);
+    }
+
+    //todo remember to delete this method
+    @GetMapping(value = "/restricted-url", consumes = MediaType.ALL_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<String> restrictedUrl() {
+        return new ResponseEntity<>("You have access to the restricted url", HttpStatus.OK);
     }
 }

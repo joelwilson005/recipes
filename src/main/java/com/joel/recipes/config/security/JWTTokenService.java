@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class JWTTokenService {
                 .subject(auth.getName())
                 .claim("roles", scope)
                 .claim("id", userId)
+                .expiresAt(Instant.now().plus(10, ChronoUnit.MINUTES))
                 .build();
         // Encoding the JWT and returning the token value
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
