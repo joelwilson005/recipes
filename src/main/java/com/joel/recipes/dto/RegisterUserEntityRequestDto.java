@@ -35,6 +35,6 @@ public record RegisterUserEntityRequestDto(
          * - May contain whitespace
          */
         @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$", message = "Invalid password format")
-        @NotBlank(message = "Password cannot be empty")
+        @NotBlank(message = "Password cannot be blank")
         String password) {
 }

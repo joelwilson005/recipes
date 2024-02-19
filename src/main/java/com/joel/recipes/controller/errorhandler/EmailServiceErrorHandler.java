@@ -2,6 +2,7 @@ package com.joel.recipes.controller.errorhandler;
 
 import com.joel.recipes.util.ErrorReporter;
 import jakarta.mail.MessagingException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.UnsupportedEncodingException;
 
 @RestControllerAdvice
+@Order(2)
 public class EmailServiceErrorHandler {
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "An internal server error has occurred";
 

@@ -3,17 +3,15 @@ package com.joel.recipes.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.ManyToOne;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -23,6 +21,6 @@ public class RefreshToken {
     private UUID id;
     private UUID tokenValue;
     private Instant expirationDate;
-    @OneToOne
+    @ManyToOne
     private UserEntity userEntity;
 }

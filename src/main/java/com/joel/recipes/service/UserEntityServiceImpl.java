@@ -13,6 +13,7 @@ import com.joel.recipes.repository.RoleRepository;
 import com.joel.recipes.repository.UserEntityRepository;
 import com.joel.recipes.util.UserEntityMapper;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Log
+@Transactional
 public class UserEntityServiceImpl implements UserEntityService {
     private final UserEntityRepository userEntityRepository;
     private final RoleRepository roleRepository;
@@ -73,6 +75,22 @@ public class UserEntityServiceImpl implements UserEntityService {
         return new AuthenticatedUserEntity(userEntity.getId(), jwt, refreshToken.getTokenValue().toString());
     }
 
+    /*
+        WARNING!!!!
+        Use method with caution
+        Ensure that verification token is present before calling this method.
+        This method does not use AuthenticationManager to generate an Authentication object
+     */
+    @Override
+    public AuthenticatedUserEntity authenticateUserEntity(String email) throws UserEntityDoesNotExistException {
+        UserEntity userEntity = this.userEntityRepository.findUserEntityByEmail(email).orElseThrow(UserEntityDoesNotExistException::new);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEntity, null, userEntity.getAuthorities());
+        String jwt = this.jwtTokenService.generateJwt(authentication, userEntity.getId());
+        RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(email);
+        return new AuthenticatedUserEntity(userEntity.getId(), jwt, refreshToken.getTokenValue().toString());
+    }
+
+
     @Override
     public void registerNewUserEntity(UserEntity userEntity) throws Exception {
         var errorList = new HashMap<String, String>();
@@ -81,7 +99,7 @@ public class UserEntityServiceImpl implements UserEntityService {
             errorList.put("email", "Email address is already in use");
         }
 
-        if (this.userEntityRepository.findUserEntityByUsername(userEntity.getUsername()).isPresent()) {
+        if (this.userEntityRepository.findUserEntityByUsername(StringUtils.lowerCase(userEntity.getUsername())).isPresent()) {
             errorList.put("username", "Username is already in use");
         }
 
@@ -90,6 +108,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         }
 
         Role userRole = roleRepository.findByAuthority(RoleType.USER.name()).orElseThrow(() -> new Exception("Role does not exist"));
+
         userEntity.setAuthorities(new HashSet<>(Collections.singletonList(userRole)));
         userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
         userEntity.setAccountStatus(AccountStatus.ACTIVE);
@@ -97,12 +116,24 @@ public class UserEntityServiceImpl implements UserEntityService {
         // Remove excess whitespace and capitalize
         userEntity.setFirstname(StringUtils.capitalize(StringUtils.trim(userEntity.getFirstname())));
         userEntity.setLastname(StringUtils.capitalize(StringUtils.trim(userEntity.getLastname())));
+
+        userEntity.setUsername(StringUtils.lowerCase(userEntity.getUsername()));
+
         this.emailService.sendEmailVerificationToken(userEntity);
         this.userEntityRepository.save(userEntity);
     }
 
     @Override
-    public AuthenticatedUserEntity verifyEmailAddressWithToken(String email, String password, String emailVerificationToken) throws Exception {
+    public void emailVerificationRequest(String usernameOrEmail) throws UserEntityDoesNotExistException, MessagingException, UnsupportedEncodingException {
+        UserEntity userEntity = this.userEntityRepository.findUserEntityByEmailOrUsername(usernameOrEmail).orElseThrow(
+                UserEntityDoesNotExistException::new
+        );
+
+        this.emailService.sendEmailVerificationToken(userEntity);
+    }
+
+    @Override
+    public AuthenticatedUserEntity verifyEmailAddressWithToken(String email, String emailVerificationToken) throws Exception {
         String trimmedToken = StringUtils.trim(emailVerificationToken);
         UserEntity userEntity = this.userEntityRepository.findUserEntityByEmail(email).orElseThrow(UserEntityDoesNotExistException::new);
         if (userEntity.isEmailVerified()) throw new EmailAddressAlreadyVerifiedException();
@@ -116,7 +147,7 @@ public class UserEntityServiceImpl implements UserEntityService {
             userEntity.setEmailVerificationTimestamp(new Timestamp(System.currentTimeMillis()));
             userEntity.setEmailVerificationToken(null);
             this.userEntityRepository.save(userEntity);
-            return this.authenticateUserEntity(userEntity.getEmail(), password);
+            return this.authenticateUserEntity(userEntity.getEmail());
         }
 
         throw new InvalidEmailVerificationTokenException();
@@ -124,11 +155,10 @@ public class UserEntityServiceImpl implements UserEntityService {
 
 
     @Override
-    public AuthenticatedUserEntity loginUser(String userNameOrEmail, String password) throws UserEntityDoesNotExistException, EmailAddressAlreadyVerifiedException {
+    public AuthenticatedUserEntity loginUser(String userNameOrEmail, String password) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException {
         UserEntity userEntity = this.userEntityRepository.findUserEntityByEmailOrUsername(userNameOrEmail).orElseThrow(UserEntityDoesNotExistException::new);
-        if (!userEntity.isEmailVerified()) throw new EmailAddressAlreadyVerifiedException();
-        String email = userEntity.getEmail();
-        return this.authenticateUserEntity(email, password);
+        if (!userEntity.isEmailVerified()) throw new EmailAddressNotVerifiedException();
+        return this.authenticateUserEntity(userEntity.getEmail(), password);
     }
 
     @Override
@@ -155,17 +185,38 @@ public class UserEntityServiceImpl implements UserEntityService {
     @Override
     public AuthenticatedUserEntity resetPasswordWithToken(String usernameOrEmail, String verificationToken, String password) throws UserEntityDoesNotExistException, InvalidPasswordResetTokenException, ExpiredVerificationTokenExeption {
         UserEntity userEntity = this.userEntityRepository.findUserEntityByEmailOrUsername(usernameOrEmail).orElseThrow(UserEntityDoesNotExistException::new);
-        if (userEntity.getPasswordResetToken().getExpirationTimestamp().before(new Timestamp(System.currentTimeMillis()))) {
-            throw new ExpiredVerificationTokenExeption();
+
+        if (Objects.nonNull(userEntity.getPasswordResetToken())) {
+            if (userEntity.getPasswordResetToken().getExpirationTimestamp().before(new Timestamp(System.currentTimeMillis()))) {
+                throw new ExpiredVerificationTokenExeption();
+            }
         }
 
-        if ((userEntity.getPasswordResetToken() != null) && (userEntity.getPasswordResetToken().getVerificationToken().equals(verificationToken))) {
-            userEntity.setPassword(this.passwordEncoder.encode(password));
-            userEntity.setPasswordResetToken(null);
-            return this.authenticateUserEntity(userEntity.getEmail(), password);
-        } else {
-            throw new InvalidPasswordResetTokenException();
+        if ((Objects.nonNull(userEntity.getPasswordResetToken()))) {
+            if (userEntity.getPasswordResetToken().getVerificationToken().equals(verificationToken)) {
+                userEntity.setPasswordResetToken(null);
+                userEntity.setPassword(this.passwordEncoder.encode(password));
+
+
+                var refreshTokens = userEntity.getRefreshTokens();
+                refreshTokens.forEach(
+                        (token) -> {
+                            try {
+                                this.refreshTokenService.deleteRefreshToken(token.getTokenValue().toString());
+                                userEntity.getRefreshTokens().remove(token);
+                                this.userEntityRepository.save(userEntity);
+                            } catch (RefreshTokenNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
+
+                this.userEntityRepository.save(userEntity);
+                return this.authenticateUserEntity(userEntity.getEmail(), password);
+            }
         }
+
+        throw new InvalidPasswordResetTokenException();
     }
 
     @Override
@@ -228,6 +279,7 @@ public class UserEntityServiceImpl implements UserEntityService {
             }
         }
 
+
         if (!errorList.isEmpty()) {
             throw new UserEntityValidationException(errorList);
         }
@@ -244,17 +296,39 @@ public class UserEntityServiceImpl implements UserEntityService {
         this.userEntityRepository.save(userEntityToBeUpdated);
     }
 
+    // Logout user from all devices
     @Override
-    public void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException {
+    public void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException {
         UserEntity userEntity = this.userEntityRepository.findById(id).orElseThrow(
                 UserEntityDoesNotExistException::new
         );
 
-        RefreshToken refreshToken;
-        if (Objects.nonNull(userEntity.getRefreshToken())) {
-            refreshToken = userEntity.getRefreshToken();
-            this.refreshTokenService.deleteRefreshToken(refreshToken.getTokenValue().toString());
-        }
+        var refreshTokens = userEntity.getRefreshTokens();
+        refreshTokens.forEach(
+                (token) -> {
+                    try {
+                        this.refreshTokenService.deleteRefreshToken(token.getTokenValue().toString());
+                        userEntity.getRefreshTokens().remove(token);
+                        this.userEntityRepository.save(userEntity);
+                    } catch (RefreshTokenNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+    }
+
+    // Logout user from a single device
+    @Override
+    public void logoutUserEntity(UUID id, UUID refreshTokenValue) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException {
+        UserEntity userEntity = this.userEntityRepository.findById(id).orElseThrow(
+                UserEntityDoesNotExistException::new
+        );
+
+        RefreshToken refreshToken = this.refreshTokenService.findRefreshTokenByTokenValue(refreshTokenValue);
+        userEntity.getRefreshTokens().remove(refreshToken);
+        this.userEntityRepository.save(userEntity);
+        this.refreshTokenService.deleteRefreshToken(refreshTokenValue.toString());
     }
 
     @Override

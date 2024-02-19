@@ -10,11 +10,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class RestApiFilterChainConfig {
+public class FilterChainConfig {
 
     private final JwtAuthenticationConverter authenticationConverter;
 
-    public RestApiFilterChainConfig(JwtAuthenticationConverter authenticationConverter) {
+    public FilterChainConfig(JwtAuthenticationConverter authenticationConverter) {
         this.authenticationConverter = authenticationConverter;
     }
 

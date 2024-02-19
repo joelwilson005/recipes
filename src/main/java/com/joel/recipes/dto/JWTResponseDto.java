@@ -1,4 +1,4 @@
 package com.joel.recipes.dto;
 
-public record JWTResponseDto(String bearerToken) {
+public record JWTResponseDto(String jwt) {
 }

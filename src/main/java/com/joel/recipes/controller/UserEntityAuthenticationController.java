@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 
 @RestController
@@ -42,15 +43,19 @@ public class UserEntityAuthenticationController {
 
     @PostMapping("/register/verify-email")
     public ResponseEntity<AuthenticatedUserEntity> verifyEmail(@Valid @RequestBody VerifyEmailRequestDto request) throws Exception {
-        return new ResponseEntity<>(this.userEntityService.verifyEmailAddressWithToken(
-                request.email(), request.password(), request.emailVerificationToken()
-        ), HttpStatus.OK);
+        return new ResponseEntity<>(this.userEntityService.verifyEmailAddressWithToken(request.email(), request.emailVerificationToken()), HttpStatus.OK);
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticatedUserEntity> login(@Valid @RequestBody LoginRequestDto request) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException, EmailAddressAlreadyVerifiedException {
-        return new ResponseEntity<>(this.userEntityService.loginUser(
-                request.email(), request.password()), HttpStatus.OK);
+        return new ResponseEntity<>(this.userEntityService.loginUser(request.email(), request.password()), HttpStatus.OK);
+    }
+
+    @PostMapping("/verify-email-request")
+    public ResponseEntity<ApiMessage> verifyEmail(@Valid @RequestBody EmailOrUsernameDto requestDto) throws UserEntityDoesNotExistException, MessagingException, UnsupportedEncodingException {
+        this.userEntityService.emailVerificationRequest(requestDto.usernameOrEmail());
+        return new ResponseEntity<>(new ApiMessage("Email sent successfully"), HttpStatus.OK);
     }
 
     /*
@@ -69,15 +74,13 @@ public class UserEntityAuthenticationController {
      */
     @PostMapping("/reset-password-token")
     public ResponseEntity<AuthenticatedUserEntity> resetPasswordToken(@Valid @RequestBody ResetPasswordDto request) throws InvalidPasswordResetTokenException, UserEntityDoesNotExistException, ExpiredVerificationTokenExeption {
-        var authenticatedUserEntity = this.userEntityService.resetPasswordWithToken(
-                request.usernameOrEmail(),
-                request.passwordResetToken(),
-                request.password()
-        );
+        var authenticatedUserEntity = this.userEntityService.resetPasswordWithToken(request.usernameOrEmail(), request.passwordResetToken(), request.password());
         return new ResponseEntity<>(authenticatedUserEntity, HttpStatus.OK);
     }
 
-
+    /*
+        Refresh tokens are sent to this endpoint to obtain new JWTs
+     */
     @PostMapping("/refresh-token")
     public ResponseEntity<JWTResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto requestDto) throws ExpiredVerificationTokenExeption, RefreshTokenNotFoundException, ExpiredRefreshTokenException {
         String refreshToken = this.userEntityService.refreshToken(requestDto.refreshToken());
@@ -85,9 +88,15 @@ public class UserEntityAuthenticationController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PostMapping("/logout") // todo test this controller method
-    public ResponseEntity<ApiMessage> logoutUser(@Valid @RequestBody LogoutUserEntityRequestDto requestDto) throws UserEntityDoesNotExistException {
-        this.userEntityService.logoutUserEntity(requestDto.id());
+    @PostMapping("/logout")
+    public ResponseEntity<ApiMessage> logoutUser(@Valid @RequestBody LogoutUserEntityRequestDto requestDto) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException {
+        this.userEntityService.logoutUserEntity(UUID.fromString(requestDto.id()), UUID.fromString(requestDto.refreshTokenValue()));
+        return new ResponseEntity<>(new ApiMessage("User logged out successfully"), HttpStatus.OK);
+    }
+
+    @PostMapping("/logout/all")
+    public ResponseEntity<ApiMessage> logoutUserFromAll(@Valid @RequestBody LogoutUserEntityRequestDto requestDto) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException {
+        this.userEntityService.logoutUserEntity(UUID.fromString(requestDto.id()));
         return new ResponseEntity<>(new ApiMessage("User logged out successfully"), HttpStatus.OK);
     }
 

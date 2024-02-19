@@ -45,8 +45,8 @@ public class UserEntity implements UserDetails {
     private Set<Recipe> favourites;
     @ManyToMany
     private Set<Role> authorities;
-    @OneToOne
-    private RefreshToken refreshToken;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RefreshToken> refreshTokens;
     private AccountStatus accountStatus;
 
     @Override
@@ -56,7 +56,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override

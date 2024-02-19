@@ -19,11 +19,15 @@ public interface UserEntityService extends UserDetailsService {
 
     void updateUserEntity(UserEntity userEntity);
 
+    AuthenticatedUserEntity authenticateUserEntity(String email) throws UserEntityDoesNotExistException;
+
     void registerNewUserEntity(UserEntity userEntity) throws Exception;
 
-    AuthenticatedUserEntity verifyEmailAddressWithToken(String email, String password, String emailVerificationToken) throws Exception;
-
     AuthenticatedUserEntity authenticateUserEntity(String email, String password) throws UserEntityDoesNotExistException;
+
+    void emailVerificationRequest(String usernameOrEmail) throws UserEntityDoesNotExistException, MessagingException, UnsupportedEncodingException;
+
+    AuthenticatedUserEntity verifyEmailAddressWithToken(String email, String emailVerificationToken) throws Exception;
 
     AuthenticatedUserEntity loginUser(String email, String password) throws UserEntityDoesNotExistException, EmailAddressNotVerifiedException, EmailAddressAlreadyVerifiedException;
 
@@ -35,7 +39,10 @@ public interface UserEntityService extends UserDetailsService {
 
     void applyJsonPatchToUserEntity(JsonPatch patch, UUID id) throws UserEntityDoesNotExistException, JsonProcessingException, JsonPatchException, UsernameAlreadyTakenException, EmailAddressAlreadyTakenException, MessagingException, UnsupportedEncodingException, InvalidEmailAddressException, UserEntityValidationException;
 
-    void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException;
+    void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException;
+
+    // Logout user from a single device
+    void logoutUserEntity(UUID id, UUID refreshTokenValue) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException;
 
     void deleteUserEntity(UUID id) throws UserEntityDoesNotExistException;
 }

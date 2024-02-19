@@ -6,6 +6,7 @@ import com.joel.recipes.util.VerificationTokenGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -28,6 +29,7 @@ import java.util.logging.Level;
 
 @Service
 @Log
+@Transactional
 public class EmailServiceImpl implements EmailService {
 
     @Value("${spring.mail.properties.mail.smtp.from}")

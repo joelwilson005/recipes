@@ -4,11 +4,13 @@ import com.joel.recipes.exception.ExpiredRefreshTokenException;
 import com.joel.recipes.exception.RefreshTokenNotFoundException;
 import com.joel.recipes.exception.UserEntityDoesNotExistException;
 import com.joel.recipes.model.RefreshToken;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@Transactional
 public interface RefreshTokenService {
     RefreshToken createRefreshToken(String usernameOrEmail) throws UserEntityDoesNotExistException;
 
@@ -18,6 +20,6 @@ public interface RefreshTokenService {
 
     RefreshToken verifyExpiration(RefreshToken refreshToken) throws ExpiredRefreshTokenException;
 
-    void deleteRefreshToken(String refreshTokenValue);
+    void deleteRefreshToken(String refreshTokenValue) throws RefreshTokenNotFoundException;
 
 }
