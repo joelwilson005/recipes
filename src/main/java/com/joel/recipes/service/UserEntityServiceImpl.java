@@ -173,12 +173,8 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public void resetPasswordRequest(String usernameOrEmail) throws UserEntityDoesNotExistException, MessagingException, UnsupportedEncodingException {
-        if (EmailValidator.getInstance().isValid(usernameOrEmail)) {
-            this.emailService.sendPasswordResetToken(this.userEntityRepository.findUserEntityByEmail(usernameOrEmail).orElseThrow(UserEntityDoesNotExistException::new));
-        } else {
-            UserEntity userEntity = this.userEntityRepository.findUserEntityByUsername(usernameOrEmail).orElseThrow(UserEntityDoesNotExistException::new);
-            this.emailService.sendPasswordResetToken(userEntity);
-        }
+        var userEntity = this.userEntityRepository.findUserEntityByEmailOrUsername(usernameOrEmail).orElseThrow(UserEntityDoesNotExistException::new);
+        this.emailService.sendPasswordResetToken(userEntity);
 
     }
 
@@ -198,18 +194,7 @@ public class UserEntityServiceImpl implements UserEntityService {
                 userEntity.setPassword(this.passwordEncoder.encode(password));
 
 
-                var refreshTokens = userEntity.getRefreshTokens();
-                refreshTokens.forEach(
-                        (token) -> {
-                            try {
-                                this.refreshTokenService.deleteRefreshToken(token.getTokenValue().toString());
-                                userEntity.getRefreshTokens().remove(token);
-                                this.userEntityRepository.save(userEntity);
-                            } catch (RefreshTokenNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                );
+                removeRefreshTokens(userEntity);
 
                 this.userEntityRepository.save(userEntity);
                 return this.authenticateUserEntity(userEntity.getEmail(), password);
@@ -220,7 +205,7 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     @Override
-    public void applyJsonPatchToUserEntity(JsonPatch patch, UUID id) throws UserEntityDoesNotExistException, JsonProcessingException, JsonPatchException, MessagingException, UnsupportedEncodingException, UserEntityValidationException {
+    public UserEntity applyJsonPatchToUserEntity(JsonPatch patch, UUID id) throws UserEntityDoesNotExistException, JsonProcessingException, JsonPatchException, MessagingException, UnsupportedEncodingException, UserEntityValidationException {
         UserEntity userEntityToBeUpdated = this.userEntityRepository.findById(id).orElseThrow(UserEntityDoesNotExistException::new);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -293,29 +278,16 @@ public class UserEntityServiceImpl implements UserEntityService {
             this.emailService.sendEmailVerificationToken(userEntityToBeUpdated);
         }
 
-        this.userEntityRepository.save(userEntityToBeUpdated);
+        return this.userEntityRepository.save(userEntityToBeUpdated);
     }
 
     // Logout user from all devices
     @Override
-    public void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException, RefreshTokenNotFoundException {
+    public void logoutUserEntity(UUID id) throws UserEntityDoesNotExistException {
         UserEntity userEntity = this.userEntityRepository.findById(id).orElseThrow(
                 UserEntityDoesNotExistException::new
         );
-
-        var refreshTokens = userEntity.getRefreshTokens();
-        refreshTokens.forEach(
-                (token) -> {
-                    try {
-                        this.refreshTokenService.deleteRefreshToken(token.getTokenValue().toString());
-                        userEntity.getRefreshTokens().remove(token);
-                        this.userEntityRepository.save(userEntity);
-                    } catch (RefreshTokenNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
-
+        removeRefreshTokens(userEntity);
     }
 
     // Logout user from a single device
@@ -346,5 +318,20 @@ public class UserEntityServiceImpl implements UserEntityService {
             return userEntityOptional.get();
         }
         throw new UserEntityDoesNotExistException();
+    }
+
+    private void removeRefreshTokens(UserEntity userEntity) {
+        var refreshTokens = userEntity.getRefreshTokens();
+        refreshTokens.forEach(
+                (token) -> {
+                    try {
+                        this.refreshTokenService.deleteRefreshToken(token.getTokenValue().toString());
+                        userEntity.getRefreshTokens().remove(token);
+                        this.userEntityRepository.save(userEntity);
+                    } catch (RefreshTokenNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 }
